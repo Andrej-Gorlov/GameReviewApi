@@ -1,18 +1,14 @@
 ﻿using GameReviewApi.Domain.Entity.Authenticate;
 using GameReviewApi.Domain.Entity.Dto;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameReviewApi.Test.MockData
 {
     public class UserMockData
     {
-        public static IEnumerable<UserDto> Get()
-        {
-            return new List<UserDto>()
+        public static IEnumerable<UserDto> Get() =>
+            new List<UserDto>()
             {
                 new UserDto()
                 {
@@ -39,7 +35,6 @@ namespace GameReviewApi.Test.MockData
                     Role=Role.User
                 }
             };
-        }
 
         public static UserDto? GetById(int id)
         {

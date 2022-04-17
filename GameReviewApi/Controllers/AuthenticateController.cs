@@ -8,7 +8,6 @@ namespace GameReviewApi.Controllers
     [Produces("application/json")]
     public class AuthenticateController : ControllerBase
     {
-
         private readonly IAuthenticateService _authenticateService;
         public AuthenticateController(IAuthenticateService authenticateService) => _authenticateService = authenticateService;
 
@@ -45,7 +44,7 @@ namespace GameReviewApi.Controllers
             var register = await _authenticateService.RegisterAsyncService(model);
             if (register == null) 
             {
-                return BadRequest();
+                return BadRequest(register);
             }
             if (register.StatusCode == 500) 
             {
@@ -53,6 +52,7 @@ namespace GameReviewApi.Controllers
             }
             return Ok(register);
         }
+
         /// <summary>
         /// Регистрация пользователя [Admin].
         /// </summary>
@@ -86,7 +86,7 @@ namespace GameReviewApi.Controllers
             var register = await _authenticateService.RegisterAdminAsyncService(model);
             if (register == null) 
             {
-                return BadRequest();
+                return BadRequest(register);
             }
             if (register.StatusCode == 500) 
             {
@@ -94,6 +94,7 @@ namespace GameReviewApi.Controllers
             }
             return Ok(register);
         }
+
         /// <summary>
         /// Авторизация пользователя.
         /// </summary>

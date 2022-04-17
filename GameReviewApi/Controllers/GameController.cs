@@ -50,10 +50,11 @@ namespace GameReviewApi.Controllers
             var game = await _gameService.GameStoriesAndGradesAsyncService(nameGame);
             if (game == null) 
             {
-                return NotFound();
+                return NotFound(game);
             }
             return Ok(game);
         }
+
         /// <summary>
         /// Список названий игр по жанру.
         /// </summary>
@@ -78,10 +79,11 @@ namespace GameReviewApi.Controllers
             var games = await _gameService.GamesByGenreAsyncService(genre);
             if (games == null) 
             {
-                return NotFound();
+                return NotFound(games);
             }
             return Ok(games);
         }
+
         /// <summary>
         /// Создание новой игры.
         /// </summary>
@@ -125,12 +127,13 @@ namespace GameReviewApi.Controllers
         public async Task<IActionResult> CreateGame([FromBody] GameDto gameDto)
         {
             var game = await _gameService.CreateAsyncService(gameDto);
-            if (game == null) 
+            if (game is null) 
             {
-                return BadRequest();
+                return BadRequest(game);
             }
             return CreatedAtAction(nameof(GetGames), gameDto);
         }
+
         /// <summary>
         /// Редактирование игры.
         /// </summary>
@@ -172,12 +175,13 @@ namespace GameReviewApi.Controllers
         public async Task<IActionResult> UpdateGame([FromBody] GameDto gameDto)
         {
             var game = await _gameService.UpdateAsyncService(gameDto);
-            if (game == null) 
+            if (game is null) 
             {
-                return NotFound();
+                return NotFound(game);
             }
             return Ok(game);
         }
+
         /// <summary>
         /// Удаление игры по id.
         /// </summary>
@@ -208,10 +212,11 @@ namespace GameReviewApi.Controllers
             var game = await _gameService.DeleteAsyncService(id);
             if (!game) 
             {
-                return NotFound();
+                return NotFound(game);
             } 
             return NoContent();
         }
+
         /// <summary>
         /// Вывод игры по id.
         /// </summary>
@@ -242,7 +247,7 @@ namespace GameReviewApi.Controllers
             var game = await _gameService.GetByIdAsyncService(id);
             if (game == null) 
             {
-                return NotFound();
+                return NotFound(game);
             }
             return Ok(game);
         }

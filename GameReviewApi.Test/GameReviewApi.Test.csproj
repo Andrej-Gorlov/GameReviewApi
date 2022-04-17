@@ -31,7 +31,6 @@
 
   <ItemGroup>
     <Folder Include="System\Integration\Repository\" />
-    <Folder Include="System\Modular\Repository\" />
   </ItemGroup>
 
 </Project>

@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GameReviewApi.DAL\GameReviewApi.DAL.csproj" />
+    <ProjectReference Include="..\GameReviewApi.Domain\GameReviewApi.Domain.csproj" />
     <ProjectReference Include="..\GameReviewApi.Service\GameReviewApi.Service.csproj" />
   </ItemGroup>
 

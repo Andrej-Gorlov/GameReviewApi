@@ -12,6 +12,7 @@ namespace GameReviewApi.Controllers
     {
         private readonly IGenreService _genreService;
         public GenreController(IGenreService genreService) => _genreService = genreService;
+
         /// <summary>
         /// Вывод жанра по id.
         /// </summary>
@@ -44,10 +45,11 @@ namespace GameReviewApi.Controllers
             var genre = await _genreService.GetByIdAsyncService(id);
             if (genre == null) 
             {
-                return NotFound();
+                return NotFound(genre);
             }
             return Ok(genre);
         }
+
         /// <summary>
         /// Удаление жанра по id.
         /// </summary>
@@ -80,10 +82,11 @@ namespace GameReviewApi.Controllers
             var genre = await _genreService.DeleteAsyncService(id);
             if (!genre) 
             {
-                return NotFound();
+                return NotFound(genre);
             }
             return NoContent();
         }
+
         /// <summary>
         /// Создание нового жанра.
         /// </summary>
@@ -112,15 +115,16 @@ namespace GameReviewApi.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> CreateReview([FromBody] GenreDto genreDto)
+        public async Task<IActionResult> CreateGenre([FromBody] GenreDto genreDto)
         {
             var genre = await _genreService.CreateAsyncService(genreDto);
-            if (genre == null) 
+            if (genre.GenreId == 0) 
             {
-                return BadRequest();
+                return BadRequest(genre);
             }
             return CreatedAtAction(nameof(GetByIdGenre), genreDto);
         }
+
         /// <summary>
         /// Редактирование жанра.
         /// </summary>
@@ -147,12 +151,12 @@ namespace GameReviewApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> UpdateReview([FromBody] GenreDto genreDto)
+        public async Task<IActionResult> UpdateGenre([FromBody] GenreDto genreDto)
         {
             var genre = await _genreService.UpdateAsyncService(genreDto);
-            if (genre == null) 
+            if (genre.GenreId == 0) 
             {
-                return NotFound();
+                return NotFound(genre);
             } 
             return Ok(genre);
         }

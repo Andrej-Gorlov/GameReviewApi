@@ -40,6 +40,7 @@ namespace GameReviewApi.DAL.Repository
                 return false;
             }
         }
+        
         public async Task<ReviewsByGam> Get(string nameGame) => 
             new()
             {
@@ -47,26 +48,31 @@ namespace GameReviewApi.DAL.Repository
                 ShortStories = _db.Review.Where(x => x.GameId == GameId(nameGame)).Select(x => x.ShortStory).ToList(),
                 Grades = _db.Review.Where(x => x.GameId == GameId(nameGame)).Select(x => x.Grade).ToList()
             };
+       
         private int GameId(string nameGame)
         {
             Game game = _db.Game.FirstOrDefault(x => x.GameName.ToUpper().Replace(" ", "") == nameGame.ToUpper().Replace(" ", ""));
             return game.GameId;
         }
+       
         public async Task<GameDto> GetById(int id)
         {
             Game game = await _db.Game.Include(s => s.Genres).Include(s => s.Reviews).FirstOrDefaultAsync(x => x.GameId == id);
             return _mapper.Map<GameDto>(game);
         }
+       
         public async Task<IEnumerable<string>> GetGames(string genre) =>
             _mapper.Map<List<string>>(await _db.Game.Where(game => game.Genres
                 .Any(g => g.GenreName.ToUpper().Replace(" ", "") == genre.ToUpper().Replace(" ", "")))
                 .Select(x => x.GameName).ToListAsync());
+       
         public async Task<List<GameAvgGrade>> GetGamesAvgGrade() =>
             await _db.Game.Include(x => x.Reviews).Select(x => new GameAvgGrade
             {
                 GameName = x.GameName,
                 Grade = (int)x.Reviews.Where(game => game.GameId == x.GameId).Average(avg => avg.Grade)
             }).OrderByDescending(sort => sort.Grade).ToListAsync();
+       
         public async Task<GameDto> Update(GameDto entity)
         {
             Game game = _mapper.Map<GameDto, Game>(entity);

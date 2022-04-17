@@ -1,22 +1,18 @@
 ﻿using FluentAssertions;
 using GameReviewApi.Controllers;
-using GameReviewApi.Domain.Entity.Dto;
 using GameReviewApi.Service.Interfaces;
 using GameReviewApi.Test.MockData;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace GameReviewApi.Test.System.Modular.Controllers.UserControllerTest
 {
-    public class UserControllerGetByIdUserTest
+    public class GetByIdUserTest
     {
-        private readonly Mock<IUserService> userService = new Mock<IUserService>();
+        private readonly Mock<IUserService> _userService = new Mock<IUserService>();
 
         /// <summary>
         /// Проверяет что обработчик возвращает кода состояния 200
@@ -27,10 +23,10 @@ namespace GameReviewApi.Test.System.Modular.Controllers.UserControllerTest
         {
             /// Arrange
             int id = 1;
-            userService.Setup(_ => _.GetByIdAsyncService(It.IsAny<int>())).ReturnsAsync(UserMockData.GetById(id));
-            UserController _userController = new UserController(userService.Object);
+            _userService.Setup(_ => _.GetByIdAsyncService(It.IsAny<int>())).ReturnsAsync(UserMockData.GetById(id));
+            UserController userController = new UserController(_userService.Object);
             /// Act
-            var result = (OkObjectResult)await _userController.GetByIdUser(id);
+            var result = (OkObjectResult)await userController.GetByIdUser(id);
             /// Assert
             result.StatusCode.Should().Be(200);
 
@@ -48,10 +44,10 @@ namespace GameReviewApi.Test.System.Modular.Controllers.UserControllerTest
         {
             /// Arrange
             int id = 0; 
-            userService.Setup(_ => _.GetByIdAsyncService(It.IsAny<int>())).ReturnsAsync(UserMockData.GetById(It.IsAny<int>()));
-            UserController _userController = new UserController(userService.Object);
+            _userService.Setup(_ => _.GetByIdAsyncService(It.IsAny<int>())).ReturnsAsync(UserMockData.GetById(It.IsAny<int>()));
+            UserController userController = new UserController(_userService.Object);
             /// Act
-            var result = (BadRequestObjectResult)await _userController.GetByIdUser(id);
+            var result = (BadRequestObjectResult)await userController.GetByIdUser(id);
             /// Assert
             result.StatusCode.Should().Be(400);
         }
@@ -64,10 +60,10 @@ namespace GameReviewApi.Test.System.Modular.Controllers.UserControllerTest
         public async Task GetByIdUser_ShouldReturn404Status()
         {
             /// Arrange
-            userService.Setup(_ => _.GetByIdAsyncService(It.IsAny<int>())).ReturnsAsync(UserMockData.GetById(It.IsAny<int>()));
-            UserController _userController = new UserController(userService.Object);
+            _userService.Setup(_ => _.GetByIdAsyncService(It.IsAny<int>())).ReturnsAsync(UserMockData.GetById(It.IsAny<int>()));
+            UserController userController = new UserController(_userService.Object);
             /// Act
-            var result = (NotFoundObjectResult)await _userController.GetByIdUser(UserMockData.Get().Count()+1);
+            var result = (NotFoundObjectResult)await userController.GetByIdUser(UserMockData.Get().Count()+1);
             /// Assert
             result.StatusCode.Should().Be(404);
         }

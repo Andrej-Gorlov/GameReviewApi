@@ -34,6 +34,7 @@ namespace GameReviewApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetByIdReview(int id)
         {
             if (id <= 0) 
@@ -43,10 +44,11 @@ namespace GameReviewApi.Controllers
             var review = await _reviewService.GetByIdAsyncService(id);
             if (review == null) 
             {
-                return NotFound();
+                return NotFound(review);
             }
             return Ok(review);
         }
+
         /// <summary>
         /// Удаление рецензии по id.
         /// </summary>
@@ -83,6 +85,7 @@ namespace GameReviewApi.Controllers
             }
             return NoContent();
         }
+
         /// <summary>
         /// Создание новой рецензии.
         /// </summary>
@@ -115,13 +118,23 @@ namespace GameReviewApi.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> CreateReview([FromBody] ReviewDto reviewDto)
         {
+            //if (ModelState.IsValid)
+            //{
+            //    var review = await _reviewService.CreateAsyncService(reviewDto);
+            //    return CreatedAtAction(nameof(GetByIdReview), reviewDto);
+            //}
+            //else
+            //{
+            //    return BadRequest();
+            //}
             var review = await _reviewService.CreateAsyncService(reviewDto);
-            if (review == null) 
+            if (review.GameId == 0)
             {
-                return BadRequest();
+                return BadRequest(review);
             }
             return CreatedAtAction(nameof(GetByIdReview), reviewDto);
         }
+
         /// <summary>
         /// Редактирование рецензии.
         /// </summary>
@@ -154,9 +167,9 @@ namespace GameReviewApi.Controllers
         public async Task<IActionResult> UpdateReview([FromBody] ReviewDto reviewDto)
         {
             var review = await _reviewService.UpdateAsyncService(reviewDto);
-            if (review == null) 
+            if (review.ReviewId == 0)
             {
-                return NotFound();
+                return NotFound(review);
             }
             return Ok(review);
         }

@@ -53,9 +53,6 @@ namespace GameReviewApi.Test.System.Repository
             /// Arrange
             //_context.User?.AddRange(UserMockData.GetUsersq());
             //_context.SaveChanges();
-
-
-
             var userRep = new UserRepository(_context, _mapper);
             /// Act
             var result = await userRep.GetById(1);
