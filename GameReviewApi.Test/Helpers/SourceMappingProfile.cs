@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GameReviewApi.Domain.Entity;
 using GameReviewApi.Domain.Entity.Authenticate;
 using GameReviewApi.Domain.Entity.Dto;
 using System;
@@ -15,6 +16,9 @@ namespace GameReviewApi.Test.Helpers
         {
             // Add as many of these lines as you need to map your objects
             CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<Game, GameDto>().ReverseMap();
+            CreateMap<Genre, GenreDto>().ReverseMap();
+            CreateMap<Review, ReviewDto>().ReverseMap();
         }
     }
 }

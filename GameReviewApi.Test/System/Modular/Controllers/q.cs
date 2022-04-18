@@ -35,23 +35,5 @@ namespace GameReviewApi.Test.System.Modular.Controllers
         //    var actionResult = Assert.IsType<ActionResult<Reservation>>(result);
         //    Assert.IsType<BadRequestObjectResult>(actionResult.Result);
         //}
-
-        /// <summary>
-        /// Проверяем, что из внутреннего каталога возвращается не null
-        /// </summary>
-        /// <returns></returns>
-        [Fact]
-        public async Task GetUsers_NotNullResult()
-        {
-            /// Arrange
-            var userService = new Mock<IUserService>();
-            userService.Setup(_ => _.GetAsyncService()).ReturnsAsync(UserMockData.Get());
-            UserController _userController = new UserController(userService.Object);
-            /// Act
-            var result = await _userController.GetUsers();
-            /// Assert
-            Assert.NotNull(result);
-        }
-
     }
 }
