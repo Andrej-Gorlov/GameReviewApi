@@ -38,7 +38,7 @@ namespace GameReviewApi.Test.System.Modular.Controllers.GenreControllerTest
         public async Task CreateGenre_ShouldReturn400Status()
         {
             /// Arrange
-            GenreDto genreDto = new();
+            GenreDto? genreDto = null;
             _genreService.Setup(_ => _.CreateAsyncService(It.IsAny<GenreDto>())).ReturnsAsync(genreDto);
             GenreController genreController = new GenreController(_genreService.Object);
             /// Act

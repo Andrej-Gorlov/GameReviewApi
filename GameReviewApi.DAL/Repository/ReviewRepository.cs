@@ -15,13 +15,15 @@ namespace GameReviewApi.DAL.Repository
             _db = db;
             _mapper = mapper;  
         }
+       
         public async Task<ReviewDto> Create(ReviewDto entity)
         {
             Review review = _mapper.Map<ReviewDto, Review>(entity);
             _db.Review.Add(review);
-            await _db.SaveChangesAsync();
+           await _db.SaveChangesAsync();
             return _mapper.Map<Review, ReviewDto>(review);
         }
+       
         public async Task<bool> Delete(int id)
         {
             try
@@ -40,8 +42,10 @@ namespace GameReviewApi.DAL.Repository
                 return false;
             }
         }
+
         public async Task<ReviewDto> GetById(int id) =>
             _mapper.Map<ReviewDto>(await _db.Review.FirstOrDefaultAsync(x => x.ReviewId == id));
+       
         public async Task<ReviewDto> Update(ReviewDto entity)
         {
             Review review = _mapper.Map<ReviewDto, Review>(entity);

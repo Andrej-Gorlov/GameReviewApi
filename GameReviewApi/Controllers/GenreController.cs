@@ -43,7 +43,7 @@ namespace GameReviewApi.Controllers
                 return BadRequest($"id: [{id}] не может быть меньше или равно нулю.");
             }
             var genre = await _genreService.GetByIdAsyncService(id);
-            if (genre == null) 
+            if (genre is null) 
             {
                 return NotFound(genre);
             }
@@ -118,7 +118,7 @@ namespace GameReviewApi.Controllers
         public async Task<IActionResult> CreateGenre([FromBody] GenreDto genreDto)
         {
             var genre = await _genreService.CreateAsyncService(genreDto);
-            if (genre.GenreId == 0) 
+            if (genre is null) 
             {
                 return BadRequest(genre);
             }
@@ -154,7 +154,7 @@ namespace GameReviewApi.Controllers
         public async Task<IActionResult> UpdateGenre([FromBody] GenreDto genreDto)
         {
             var genre = await _genreService.UpdateAsyncService(genreDto);
-            if (genre.GenreId == 0) 
+            if (genre is null) 
             {
                 return NotFound(genre);
             } 

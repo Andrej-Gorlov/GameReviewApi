@@ -23,7 +23,7 @@ namespace GameReviewApi.DAL.Repository
             try
             {
                 User user = await _db.User.FirstOrDefaultAsync(x => x.UserId == id);
-                if (user == null) 
+                if (user is null) 
                 {
                     return false;
                 }

@@ -42,7 +42,7 @@ namespace GameReviewApi.Controllers
                 return BadRequest($"id: [{id}] не может быть меньше или равно нулю.");
             } 
             var review = await _reviewService.GetByIdAsyncService(id);
-            if (review == null) 
+            if (review is null) 
             {
                 return NotFound(review);
             }
@@ -128,7 +128,7 @@ namespace GameReviewApi.Controllers
             //    return BadRequest();
             //}
             var review = await _reviewService.CreateAsyncService(reviewDto);
-            if (review.GameId == 0)
+            if (review is null)
             {
                 return BadRequest(review);
             }
@@ -167,7 +167,7 @@ namespace GameReviewApi.Controllers
         public async Task<IActionResult> UpdateReview([FromBody] ReviewDto reviewDto)
         {
             var review = await _reviewService.UpdateAsyncService(reviewDto);
-            if (review.ReviewId == 0)
+            if (review is null)
             {
                 return NotFound(review);
             }

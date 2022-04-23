@@ -38,7 +38,7 @@ namespace GameReviewApi.Test.System.Modular.Controllers.ReviewControllerTest
         public async Task UpdateReview_ShouldReturn404Status()
         {
             /// Arrange
-            ReviewDto reviewDto = new();
+            ReviewDto? reviewDto = null;
             _reviewService.Setup(_ => _.UpdateAsyncService(It.IsAny<ReviewDto>())).ReturnsAsync(reviewDto);
             ReviewController reviewController = new ReviewController(_reviewService.Object);
             /// Act
