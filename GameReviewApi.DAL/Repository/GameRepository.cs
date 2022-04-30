@@ -15,6 +15,7 @@ namespace GameReviewApi.DAL.Repository
             _db = db;
             _mapper = mapper;
         }
+
         public async Task<GameDto> Create(GameDto entity)
         {
             Game game = _mapper.Map<GameDto, Game>(entity);
@@ -40,27 +41,24 @@ namespace GameReviewApi.DAL.Repository
                 return false;
             }
         }
-        
         public async Task<ReviewsByGam> Get(string nameGame) => 
             new()
             {
                 GameName = nameGame,
                 ShortStories = _db.Review.Where(x => x.GameId == GameId(nameGame)).Select(x => x.ShortStory).ToList(),
-                Grades = _db.Review.Where(x => x.GameId == GameId(nameGame)).Select(x => x.Grade).ToList()
+                Grades = await _db.Review.Where(x => x.GameId == GameId(nameGame)).Select(x => x.Grade).ToListAsync()
             };
-       
+
         private int GameId(string nameGame)
         {
             Game game = _db.Game.FirstOrDefault(x => x.GameName.ToUpper().Replace(" ", "") == nameGame.ToUpper().Replace(" ", ""));
             return game.GameId;
         }
-       
         public async Task<GameDto> GetById(int id)
         {
             Game game = await _db.Game.Include(s => s.Genres).Include(s => s.Reviews).FirstOrDefaultAsync(x => x.GameId == id);
             return _mapper.Map<GameDto>(game);
         }
-       
         public async Task<IEnumerable<string>> GetGames(string genre) =>
             _mapper.Map<List<string>>(await _db.Game.Where(game => game.Genres
                 .Any(g => g.GenreName.ToUpper().Replace(" ", "") == genre.ToUpper().Replace(" ", "")))
@@ -76,6 +74,10 @@ namespace GameReviewApi.DAL.Repository
         public async Task<GameDto> Update(GameDto entity)
         {
             Game game = _mapper.Map<GameDto, Game>(entity);
+            if (await _db.Game.AsNoTracking().FirstOrDefaultAsync(x => x.GameId == entity.GameId) is null)
+            {
+                throw new NullReferenceException("Попытка обновить объект, которого нет в хранилище.");
+            }
             _db.Game.Update(game);
             await _db.SaveChangesAsync();
             return _mapper.Map<Game, GameDto>(game);

@@ -49,6 +49,10 @@ namespace GameReviewApi.DAL.Repository
         public async Task<ReviewDto> Update(ReviewDto entity)
         {
             Review review = _mapper.Map<ReviewDto, Review>(entity);
+            if (await _db.Review.AsNoTracking().FirstOrDefaultAsync(x => x.ReviewId == entity.ReviewId) is null)
+            {
+                throw new NullReferenceException("Попытка обновить объект, которого нет в хранилище.");
+            }
             _db.Review.Update(review);
             await _db.SaveChangesAsync();
             return _mapper.Map<Review, ReviewDto>(review);

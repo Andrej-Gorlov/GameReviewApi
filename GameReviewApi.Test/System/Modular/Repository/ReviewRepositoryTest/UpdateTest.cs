@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using FluentAssertions;
 using GameReviewApi.DAL;
 using GameReviewApi.DAL.Repository;
-using GameReviewApi.Domain.Entity;
 using GameReviewApi.Domain.Entity.Dto;
 using GameReviewApi.Test.Helpers;
 using GameReviewApi.Test.MockData;
@@ -14,11 +12,11 @@ using Xunit;
 
 namespace GameReviewApi.Test.System.Modular.Repository.ReviewRepositoryTest
 {
-    public class CreateTest : IDisposable
+    public class UpdateTest : IDisposable
     {
         protected readonly ApplicationDbContext _context;
         private static IMapper? _mapper;
-        public CreateTest()
+        public UpdateTest()
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
@@ -38,72 +36,70 @@ namespace GameReviewApi.Test.System.Modular.Repository.ReviewRepositoryTest
         }
 
         /// <summary>
-        /// Проверяет что обработчик возвращает правильное количество записей в бд 
-        /// </summary>
-        /// <returns></returns>
-        [Fact]
-        public async Task Create_RightRecordCountToDb()
-        {
-            /// Arrange
-            ReviewRepository reviewRep = new ReviewRepository(_context, _mapper);
-            /// Act
-            var result = await reviewRep.Create(ReviewMockData.Entity());
-            /// Assert
-            int expectedRecordCount = ReviewMockData.Get().Count() + 1;
-            _context.Review.Count().Should().Be(expectedRecordCount);
-        }
-
-        /// <summary>
-        /// Обработчик проверяет последнюю сущность в бд
-        /// </summary>
-        /// <returns></returns>
-        [Fact]
-        public async Task Create_ReturnsLastEntityToDb()
-        {
-            /// Arrange
-            ReviewRepository reviewRep = new ReviewRepository(_context, _mapper);
-            /// Act
-            var result = _mapper.Map<Review>(await reviewRep.Create(ReviewMockData.Entity()));
-            var entity = _context.Review.LastOrDefault();
-            /// Assert
-            Assert.Equal(result.ReviewId,entity.ReviewId);
-            Assert.Equal(result.GameId, entity.GameId);
-            Assert.Equal(result.Grade, entity.Grade);
-            Assert.Equal(entity.ShortStory, result.ShortStory);
-        }
-
-        /// <summary>
         /// Проверяет что обработчик возвращает правильный тип 
         /// </summary>
         /// <returns></returns>
         [Fact]
-        public async Task Create_ReturnsRightType()
+        public async Task Update_ReturnsRightType()
         {
             /// Arrange
+            ReviewDto entity = new()
+            {
+                ReviewId=1,
+                GameId=3,
+                Grade= 95,
+                ShortStory= "Музыкальное сопровождение тоже на высоте. С восточными нотками, так же атмосферно."
+            };
             ReviewRepository reviewRep = new ReviewRepository(_context, _mapper);
             /// Act
-            var result = await reviewRep.Create(ReviewMockData.Entity());
+            var result = await reviewRep.Update(entity);
             /// Assert
             Assert.IsType<ReviewDto>(result);
         }
-
         /// <summary>
-        /// Проверяет что обработчик возвращает новый обзор
+        /// Проверяет что обработчик возвращает правильный результат
         /// </summary>
         /// <returns></returns>
         [Fact]
-        public async Task Create_ReturnsNewReview()
+        public async Task Update_ReturnsRight()
         {
             /// Arrange
-            ReviewDto review = ReviewMockData.Entity();
+            ReviewDto entity = new()
+            {
+                ReviewId = 1,
+                GameId = 3,
+                Grade = 95,
+                ShortStory = "Музыкальное сопровождение тоже на высоте. С восточными нотками, так же атмосферно."
+            };
             ReviewRepository reviewRep = new ReviewRepository(_context, _mapper);
             /// Act
-            var result = await reviewRep.Create(review);
+            var result = await reviewRep.Update(entity);
             /// Assert
-            Assert.Equal(review.ReviewId, result.ReviewId);
-            Assert.Equal(review.GameId, result.GameId);
-            Assert.Equal(review.Grade, result.Grade);
-            Assert.Equal(review.ShortStory, result.ShortStory);
+            Assert.Equal(result.ReviewId, entity.ReviewId);
+            Assert.Equal(result.GameId, entity.GameId);
+            Assert.Equal(result.Grade, entity.Grade);
+            Assert.Equal(result.ShortStory, entity.ShortStory);
+        }
+        /// <summary>
+        /// Если из БД вернулся null, проверяем на исключение
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        public async Task Update_ExceptionReturns()
+        {
+            /// Arrange
+            ReviewDto entity = new()
+            {
+                ReviewId = ReviewMockData.Get().Count()+1,
+                GameId = 3,
+                Grade = 95,
+                ShortStory = "Музыкальное сопровождение тоже на высоте. С восточными нотками, так же атмосферно."
+            };
+            ReviewRepository reviewRep = new ReviewRepository(_context, _mapper);
+            /// Assert
+            await Assert.ThrowsAsync<NullReferenceException>(()=>
+                /// Act
+                reviewRep.Update(entity));
         }
 
         public void Dispose()

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using GameReviewApi.DAL;
 using GameReviewApi.DAL.Repository;
-using GameReviewApi.Domain.Entity.Authenticate;
+using GameReviewApi.Domain.Entity;
 using GameReviewApi.Domain.Entity.Dto;
 using GameReviewApi.Test.Helpers;
 using GameReviewApi.Test.MockData;
@@ -9,16 +9,17 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace GameReviewApi.Test.System.Modular.Repository.UserRepositoryTest
+namespace GameReviewApi.Test.System.Modular.Repository.ReviewRepositoryTest
 {
     public class GetByIdTest : IDisposable
     {
         protected readonly ApplicationDbContext _context;
         private static IMapper? _mapper;
-        
+
         public GetByIdTest()
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
@@ -46,11 +47,9 @@ namespace GameReviewApi.Test.System.Modular.Repository.UserRepositoryTest
         public async Task GetById_NotNullResult()
         {
             /// Arrange
-            _context.User.AddRange(_mapper.Map<List<User>>(UserMockData.Get()));
-            _context.SaveChanges();
-            UserRepository userRep = new UserRepository(_context, _mapper);
+            ReviewRepository reviewRep = new ReviewRepository(_context, _mapper);
             /// Act
-            var result = await userRep.GetById(UserMockData.Get().FirstOrDefault().UserId);
+            var result = await reviewRep.GetById(ReviewMockData.Get().FirstOrDefault().ReviewId);
             /// Assert
             Assert.NotNull(result);
         }
@@ -64,20 +63,17 @@ namespace GameReviewApi.Test.System.Modular.Repository.UserRepositoryTest
         public void GetById_ReturnsRight(int validId, int invalidId)
         {
             //Arrange
-            invalidId += UserMockData.Get().LastOrDefault().UserId;
-            User user = _mapper.Map<User>(UserMockData.GetById(validId));
-            _context.User.AddRange(_mapper.Map<List<User>>(UserMockData.Get()));
-            _context.SaveChanges();
-            UserRepository userRep = new UserRepository(_context, _mapper);
+            invalidId += ReviewMockData.Get().LastOrDefault().ReviewId;
+            Review review = _mapper.Map<Review>(ReviewMockData.GetById(validId));
+            ReviewRepository reviewRep = new ReviewRepository(_context, _mapper);
             //Act
-            var nullResult = userRep.GetById(invalidId);
-            var entityResult = userRep.GetById(user.UserId);
+            var nullResult = reviewRep.GetById(invalidId);
+            var entityResult = reviewRep.GetById(review.ReviewId);
             //Assert
-            Assert.Equal(user.UserId, entityResult.Result.UserId);
-            Assert.Equal(user.UserName, entityResult.Result.UserName);
-            Assert.Equal(user.Password, entityResult.Result.Password);
-            Assert.Equal(user.Email, entityResult.Result.Email);
-            Assert.Equal(user.Role, entityResult.Result.Role);
+            Assert.Equal(review.ReviewId, entityResult.Result.ReviewId);
+            Assert.Equal(review.GameId, entityResult.Result.GameId);
+            Assert.Equal(review.Grade, entityResult.Result.Grade);
+            Assert.Equal(review.ShortStory, entityResult.Result.ShortStory);
             Assert.Equal(null, nullResult.Result);
         }
         /// <summary>
@@ -88,15 +84,12 @@ namespace GameReviewApi.Test.System.Modular.Repository.UserRepositoryTest
         public async Task GetById_ReturnsRightType()
         {
             /// Arrange
-            _context.User.AddRange(_mapper.Map<List<User>>(UserMockData.Get()));
-            _context.SaveChanges();
-            UserRepository userRep = new UserRepository(_context, _mapper);
+            ReviewRepository reviewRep = new ReviewRepository(_context, _mapper);
             /// Act
-            var result = await userRep.GetById(UserMockData.Get().FirstOrDefault().UserId);
+            var result = await reviewRep.GetById(ReviewMockData.Get().FirstOrDefault().ReviewId);
             /// Assert
-            Assert.IsType<UserDto>(result);
+            Assert.IsType<ReviewDto>(result);
         }
-
         public void Dispose()
         {
             _context.Database.EnsureDeleted();

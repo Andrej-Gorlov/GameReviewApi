@@ -26,7 +26,7 @@ namespace GameReviewApi.Test.System.Modular.Repository.UserRepositoryTest
             _context = new ApplicationDbContext(options);
             _context.Database.EnsureCreated();
 
-            if (_mapper == null)
+            if (_mapper is null)
             {
                 var mappingConfig = new MapperConfiguration(mc =>
                 {

@@ -15,6 +15,7 @@ namespace GameReviewApi.DAL.Repository
             _db = db;
             _mapper = mapper;
         }
+
         public async Task<UserDto> GetById(int id) =>
            _mapper.Map<UserDto>(await _db.User.FirstOrDefaultAsync(x => x.UserId == id));
 

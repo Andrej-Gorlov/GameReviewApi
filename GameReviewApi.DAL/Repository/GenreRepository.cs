@@ -45,6 +45,10 @@ namespace GameReviewApi.DAL.Repository
         public async Task<GenreDto> Update(GenreDto entity)
         {
             Genre genre = _mapper.Map<GenreDto, Genre>(entity);
+            if (await _db.Genre.AsNoTracking().FirstOrDefaultAsync(x => x.GenreId == entity.GenreId) is null)
+            {
+                throw new NullReferenceException("Попытка обновить объект, которого нет в хранилище.");
+            }
             _db.Genre.Update(genre);
             await _db.SaveChangesAsync();
             return _mapper.Map<Genre, GenreDto>(genre);

@@ -12,7 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace GameReviewApi.Test.System.Modular.Repository.ReviewRepositoryTest
+namespace GameReviewApi.Test.System.Modular.Repository.GameRepositoryTest
 {
     public class CreateTest : IDisposable
     {
@@ -45,11 +45,11 @@ namespace GameReviewApi.Test.System.Modular.Repository.ReviewRepositoryTest
         public async Task Create_RightRecordCountToDb()
         {
             /// Arrange
-            ReviewRepository reviewRep = new ReviewRepository(_context, _mapper);
+            GameRepository gameRep = new GameRepository(_context, _mapper);
             /// Act
-            var result = await reviewRep.Create(ReviewMockData.Entity());
+            var result = await gameRep.Create(GameMockData.Entity());
             /// Assert
-            int expectedRecordCount = ReviewMockData.Get().Count() + 1;
+            int expectedRecordCount = GameMockData.Get().Count() + 1;
             _context.Review.Count().Should().Be(expectedRecordCount);
         }
 
@@ -61,17 +61,14 @@ namespace GameReviewApi.Test.System.Modular.Repository.ReviewRepositoryTest
         public async Task Create_ReturnsLastEntityToDb()
         {
             /// Arrange
-            ReviewRepository reviewRep = new ReviewRepository(_context, _mapper);
+            GameRepository gameRep = new GameRepository(_context, _mapper);
             /// Act
-            var result = _mapper.Map<Review>(await reviewRep.Create(ReviewMockData.Entity()));
-            var entity = _context.Review.LastOrDefault();
+            var result = _mapper.Map<Game>(await gameRep.Create(GameMockData.Entity()));
+            var entity = _context.Game.LastOrDefault();
             /// Assert
-            Assert.Equal(result.ReviewId,entity.ReviewId);
+            Assert.Equal(result.GameName, entity.GameName);
             Assert.Equal(result.GameId, entity.GameId);
-            Assert.Equal(result.Grade, entity.Grade);
-            Assert.Equal(entity.ShortStory, result.ShortStory);
         }
-
         /// <summary>
         /// Проверяет что обработчик возвращает правильный тип 
         /// </summary>
@@ -80,13 +77,12 @@ namespace GameReviewApi.Test.System.Modular.Repository.ReviewRepositoryTest
         public async Task Create_ReturnsRightType()
         {
             /// Arrange
-            ReviewRepository reviewRep = new ReviewRepository(_context, _mapper);
+            GameRepository gameRep = new GameRepository(_context, _mapper);
             /// Act
-            var result = await reviewRep.Create(ReviewMockData.Entity());
+            var result = await gameRep.Create(GameMockData.Entity());
             /// Assert
-            Assert.IsType<ReviewDto>(result);
+            Assert.IsType<GameDto>(result);
         }
-
         /// <summary>
         /// Проверяет что обработчик возвращает новый обзор
         /// </summary>
@@ -95,15 +91,13 @@ namespace GameReviewApi.Test.System.Modular.Repository.ReviewRepositoryTest
         public async Task Create_ReturnsNewReview()
         {
             /// Arrange
-            ReviewDto review = ReviewMockData.Entity();
-            ReviewRepository reviewRep = new ReviewRepository(_context, _mapper);
+            GameDto game = GameMockData.Entity();
+            GameRepository gameRep = new GameRepository(_context, _mapper);
             /// Act
-            var result = await reviewRep.Create(review);
+            var result = await gameRep.Create(game);
             /// Assert
-            Assert.Equal(review.ReviewId, result.ReviewId);
-            Assert.Equal(review.GameId, result.GameId);
-            Assert.Equal(review.Grade, result.Grade);
-            Assert.Equal(review.ShortStory, result.ShortStory);
+            Assert.Equal(game.GameName, result.GameName);
+            Assert.Equal(game.GameId, result.GameId);
         }
 
         public void Dispose()

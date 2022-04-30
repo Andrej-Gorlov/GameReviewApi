@@ -12,7 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace GameReviewApi.Test.System.Modular.Repository.ReviewRepositoryTest
+namespace GameReviewApi.Test.System.Modular.Repository.GenreRepositoryTest
 {
     public class CreateTest : IDisposable
     {
@@ -45,11 +45,11 @@ namespace GameReviewApi.Test.System.Modular.Repository.ReviewRepositoryTest
         public async Task Create_RightRecordCountToDb()
         {
             /// Arrange
-            ReviewRepository reviewRep = new ReviewRepository(_context, _mapper);
+            GenreRepository genreRep = new GenreRepository(_context, _mapper);
             /// Act
-            var result = await reviewRep.Create(ReviewMockData.Entity());
+            var result = await genreRep.Create(GenreMockData.Entity());
             /// Assert
-            int expectedRecordCount = ReviewMockData.Get().Count() + 1;
+            int expectedRecordCount = GenreMockData.Get().Count() + 1;
             _context.Review.Count().Should().Be(expectedRecordCount);
         }
 
@@ -61,17 +61,15 @@ namespace GameReviewApi.Test.System.Modular.Repository.ReviewRepositoryTest
         public async Task Create_ReturnsLastEntityToDb()
         {
             /// Arrange
-            ReviewRepository reviewRep = new ReviewRepository(_context, _mapper);
+            GenreRepository genreRep = new GenreRepository(_context, _mapper);
             /// Act
-            var result = _mapper.Map<Review>(await reviewRep.Create(ReviewMockData.Entity()));
-            var entity = _context.Review.LastOrDefault();
+            var result = _mapper.Map<Genre>(await genreRep.Create(GenreMockData.Entity()));
+            var entity = _context.Genre.LastOrDefault();
             /// Assert
-            Assert.Equal(result.ReviewId,entity.ReviewId);
+            Assert.Equal(result.GenreId, entity.GenreId);
             Assert.Equal(result.GameId, entity.GameId);
-            Assert.Equal(result.Grade, entity.Grade);
-            Assert.Equal(entity.ShortStory, result.ShortStory);
+            Assert.Equal(result.GenreName, entity.GenreName);
         }
-
         /// <summary>
         /// Проверяет что обработчик возвращает правильный тип 
         /// </summary>
@@ -80,13 +78,12 @@ namespace GameReviewApi.Test.System.Modular.Repository.ReviewRepositoryTest
         public async Task Create_ReturnsRightType()
         {
             /// Arrange
-            ReviewRepository reviewRep = new ReviewRepository(_context, _mapper);
+            GenreRepository genreRep = new GenreRepository(_context, _mapper);
             /// Act
-            var result = await reviewRep.Create(ReviewMockData.Entity());
+            var result = await genreRep.Create(GenreMockData.Entity());
             /// Assert
-            Assert.IsType<ReviewDto>(result);
+            Assert.IsType<GenreDto>(result);
         }
-
         /// <summary>
         /// Проверяет что обработчик возвращает новый обзор
         /// </summary>
@@ -95,15 +92,14 @@ namespace GameReviewApi.Test.System.Modular.Repository.ReviewRepositoryTest
         public async Task Create_ReturnsNewReview()
         {
             /// Arrange
-            ReviewDto review = ReviewMockData.Entity();
-            ReviewRepository reviewRep = new ReviewRepository(_context, _mapper);
+            GenreDto genre = GenreMockData.Entity();
+            GenreRepository genreRep = new GenreRepository(_context, _mapper);
             /// Act
-            var result = await reviewRep.Create(review);
+            var result = await genreRep.Create(genre);
             /// Assert
-            Assert.Equal(review.ReviewId, result.ReviewId);
-            Assert.Equal(review.GameId, result.GameId);
-            Assert.Equal(review.Grade, result.Grade);
-            Assert.Equal(review.ShortStory, result.ShortStory);
+            Assert.Equal(genre.GenreId, result.GenreId);
+            Assert.Equal(genre.GameId, result.GameId);
+            Assert.Equal(genre.GenreName, result.GenreName);
         }
 
         public void Dispose()

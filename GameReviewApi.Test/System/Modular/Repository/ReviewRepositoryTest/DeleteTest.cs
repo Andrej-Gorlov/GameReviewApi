@@ -1,17 +1,17 @@
 ﻿using AutoMapper;
 using GameReviewApi.DAL;
 using GameReviewApi.DAL.Repository;
-using GameReviewApi.Domain.Entity.Authenticate;
 using GameReviewApi.Test.Helpers;
 using GameReviewApi.Test.MockData;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace GameReviewApi.Test.System.Modular.Repository.UserRepositoryTest
+namespace GameReviewApi.Test.System.Modular.Repository.ReviewRepositoryTest
 {
     public class DeleteTest : IDisposable
     {
@@ -45,15 +45,12 @@ namespace GameReviewApi.Test.System.Modular.Repository.UserRepositoryTest
         public async Task Delete_ReturnsTrue()
         {
             /// Arrange
-            _context.User.AddRange(_mapper.Map<List<User>>(UserMockData.Get()));
-            _context.SaveChanges();
-            UserRepository userRep = new UserRepository(_context, _mapper);
+            ReviewRepository reviewRep = new ReviewRepository(_context, _mapper);
             /// Act
-            var result = await userRep.Delete(UserMockData.Get().FirstOrDefault().UserId);
+            var result = await reviewRep.Delete(ReviewMockData.Get().FirstOrDefault().ReviewId);
             /// Assert
             Assert.True(result);
         }
-
         /// <summary>
         /// Проверяет что обработчик возвращает false 
         /// </summary>
@@ -62,15 +59,12 @@ namespace GameReviewApi.Test.System.Modular.Repository.UserRepositoryTest
         public async Task Delete_ReturnsFalse()
         {
             /// Arrange
-            _context.User.AddRange(_mapper.Map<List<User>>(UserMockData.Get()));
-            _context.SaveChanges();
-            UserRepository userRep = new UserRepository(_context, _mapper);
+            ReviewRepository reviewRep = new ReviewRepository(_context, _mapper);
             /// Act
-            var result = await userRep.Delete(UserMockData.Get().Count()+1);
+            var result = await reviewRep.Delete(ReviewMockData.Get().Count() + 1);
             /// Assert
             Assert.False(result);
         }
-
         public void Dispose()
         {
             _context.Database.EnsureDeleted();
