@@ -50,7 +50,7 @@ namespace GameReviewApi.Test.System.Modular.Repository.GameRepositoryTest
             var result = await gameRep.Create(GameMockData.Entity());
             /// Assert
             int expectedRecordCount = GameMockData.Get().Count() + 1;
-            _context.Review.Count().Should().Be(expectedRecordCount);
+            _context.Game.Count().Should().Be(expectedRecordCount);
         }
 
         /// <summary>
