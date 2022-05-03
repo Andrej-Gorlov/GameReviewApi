@@ -35,13 +35,11 @@ namespace GameReviewApi.Test.MockData
                     Role=Role.User
                 }
             };
-
         public static UserDto? GetById(int id)
         {
             IEnumerable<UserDto> reservations = Get();
             return reservations.Where(a => a.UserId == id).FirstOrDefault();
         }
-
         public static bool Delete(int id)
         {
             IEnumerable<UserDto> reservations = Get();

@@ -1,5 +1,6 @@
 ﻿using GameReviewApi.Domain.Entity;
 using GameReviewApi.Domain.Entity.Dto;
+using GameReviewApi.Domain.Paging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,9 @@ namespace GameReviewApi.Test.MockData
 {
     public class GameMockData
     {
+        private static int pageNumber = 1;
+        private static int pageSize = Get().Count();
+
         public static GameDto Entity() =>
              new GameDto()
              {
@@ -50,12 +54,12 @@ namespace GameReviewApi.Test.MockData
             return true;
         }
 
-        public static List<GameAvgGrade> GameAvgGrade() =>
-            Get().Select(x =>new GameAvgGrade
+        public static PagedList<GameAvgGrade> GameAvgGrade() =>
+            PagedList<GameAvgGrade>.ToPagedList(Get().Select(x =>new GameAvgGrade
             {
                 GameName = x.GameName,
                 Grade =(int)ReviewMockData.Get().Where(game => game.GameId == x.GameId).Average(avg => avg.Grade)
-            }).OrderByDescending(sort => sort.Grade).ToList();
+            }).OrderByDescending(sort => sort.Grade).ToList(), pageNumber, pageSize);
         
         public static ReviewsByGam GameStoriesAndGrades(string nameGame) =>
             new()
@@ -68,9 +72,9 @@ namespace GameReviewApi.Test.MockData
         private static int GameId(string nameGame) =>
             Get().FirstOrDefault(x => x.GameName.ToUpper().Replace(" ", "") == nameGame.ToUpper().Replace(" ", "")).GameId;
 
-        public static IEnumerable<string> GamesByGenre(string genre) =>
-            Get().Where(game => GenreMockData.Get().Where(id=>id.GameId==game.GameId)
+        public static PagedList<string> GamesByGenre(string genre) =>
+            PagedList<string>.ToPagedList(Get().Where(game => GenreMockData.Get().Where(id=>id.GameId==game.GameId)
                 .Any(g => g.GenreName.ToUpper().Replace(" ", "") == genre.ToUpper().Replace(" ", "")))
-                .Select(x => x.GameName).ToList();
+                .Select(x => x.GameName).ToList(), pageNumber, pageSize);
     }
 }

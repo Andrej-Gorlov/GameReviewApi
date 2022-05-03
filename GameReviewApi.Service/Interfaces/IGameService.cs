@@ -1,12 +1,13 @@
 ﻿using GameReviewApi.Domain.Entity;
 using GameReviewApi.Domain.Entity.Dto;
+using GameReviewApi.Domain.Paging;
 
 namespace GameReviewApi.Service.Interfaces
 {
     public interface IGameService : IBaseService<GameDto>
     {
-        Task<List<GameAvgGrade>> GamesAvgGradeAsyncService();
+        Task<PagedList<GameAvgGrade>> GamesAvgGradeAsyncService(GameParameters ownerParameters);
         Task<ReviewsByGam> GameStoriesAndGradesAsyncService(string nameGame);
-        Task<IEnumerable<string>> GamesByGenreAsyncService(string genre);
+        Task<PagedList<string>> GamesByGenreAsyncService(string genre, GameParameters gameParameters);
     }
 }

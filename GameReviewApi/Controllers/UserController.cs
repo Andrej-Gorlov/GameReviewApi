@@ -1,7 +1,9 @@
 ﻿using GameReviewApi.Domain.Entity.Authenticate;
+using GameReviewApi.Domain.Paging;
 using GameReviewApi.Middleware.CustomAuthorization;
 using GameReviewApi.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace GameReviewApi.Controllers
 {
@@ -13,13 +15,18 @@ namespace GameReviewApi.Controllers
         private readonly IUserService _userService;
 
         public UserController(IUserService userService) => _userService = userService;
+
         /// <summary>
         /// Список всех пользователей.
         /// </summary>
         /// <returns>Вывод всех пользователей.</returns>
         /// <remarks>
+        /// Образец запроса:
         ///
         ///     GET /users
+        ///     
+        ///        PageNumber: Номер страницы   // Введите номер страницы, которую нужно показать с списоком всех пользователей.
+        ///        PageSize: Размер страницы    // Введите размер страницы, с каким количеством данных нужно показать всех пользователей.
         ///
         /// </remarks> 
         /// <response code="200"> Запрос прошёл. (Успех) </response>
@@ -28,7 +35,21 @@ namespace GameReviewApi.Controllers
         [Route("/users")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> GetUsers() => Ok(await _userService.GetAsyncService());
+        public async Task<IActionResult> GetUsers([FromQuery] UserParameters userParameters)
+        {
+            var users = await _userService.GetAsyncService(userParameters);
+            var metadata = new
+            {
+                users.TotalCount,
+                users.PageSize,
+                users.CurrentPage,
+                users.TotalPages,
+                users.HasNext,
+                users.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata)); // на unit test отключать.
+            return Ok(users);
+        } 
         
         /// <summary>
         /// Вывод пользователя по id.

@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using GameReviewApi.Controllers;
 using GameReviewApi.Domain.Entity;
+using GameReviewApi.Domain.Paging;
 using GameReviewApi.Service.Interfaces;
 using GameReviewApi.Test.MockData;
 using Microsoft.AspNetCore.Mvc;
@@ -24,10 +25,11 @@ namespace GameReviewApi.Test.System.Modular.Controllers.GameControllerTest
         public async Task GetGames_ShouldReturn200Status()
         {
             /// Arrange
-            _gameService.Setup(_ => _.GamesAvgGradeAsyncService()).ReturnsAsync(GameMockData.GameAvgGrade());
+            GameParameters ownerParameters = new();
+            _gameService.Setup(_ => _.GamesAvgGradeAsyncService(ownerParameters)).ReturnsAsync(GameMockData.GameAvgGrade());
             GameController gameController = new GameController(_gameService.Object);
             /// Act
-            var result = (OkObjectResult)await gameController.GetGames();
+            var result = (OkObjectResult)await gameController.GetGames(ownerParameters);
             /// Assert
             result.StatusCode.Should().Be(200);
         }
@@ -40,13 +42,14 @@ namespace GameReviewApi.Test.System.Modular.Controllers.GameControllerTest
         public async Task GetGames_ShouldReturnCorrect()
         {
             /// Arrange
-            _gameService.Setup(_ => _.GamesAvgGradeAsyncService()).ReturnsAsync(GameMockData.GameAvgGrade());
+            GameParameters ownerParameters = new();
+            _gameService.Setup(_ => _.GamesAvgGradeAsyncService(ownerParameters)).ReturnsAsync(GameMockData.GameAvgGrade());
             GameController gameController = new GameController(_gameService.Object);
             /// Act
-            var result = await gameController.GetGames();
+            var result = await gameController.GetGames(ownerParameters);
             /// Assert
             var viewResult = Assert.IsType<OkObjectResult>(result);
-            var model = Assert.IsAssignableFrom<IEnumerable<GameAvgGrade>>(viewResult.Value);
+            var model = Assert.IsAssignableFrom<PagedList<GameAvgGrade>>(viewResult.Value);
             Assert.Equal(GameMockData.GameAvgGrade().Count(), model.Count());
         }
     }

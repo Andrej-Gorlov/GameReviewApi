@@ -59,6 +59,7 @@ namespace GameReviewApi.DAL.Repository
             Game game = await _db.Game.Include(s => s.Genres).Include(s => s.Reviews).FirstOrDefaultAsync(x => x.GameId == id);
             return _mapper.Map<GameDto>(game);
         }
+
         public async Task<IEnumerable<string>> GetGames(string genre) =>
             _mapper.Map<List<string>>(await _db.Game.Where(game => game.Genres
                 .Any(g => g.GenreName.ToUpper().Replace(" ", "") == genre.ToUpper().Replace(" ", "")))
@@ -70,7 +71,7 @@ namespace GameReviewApi.DAL.Repository
                 GameName = x.GameName,
                 Grade = (int)x.Reviews.Where(game => game.GameId == x.GameId).Average(avg => avg.Grade)
             }).OrderByDescending(sort => sort.Grade).ToListAsync();
-       
+        
         public async Task<GameDto> Update(GameDto entity)
         {
             Game game = _mapper.Map<GameDto, Game>(entity);

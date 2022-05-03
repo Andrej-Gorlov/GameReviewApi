@@ -1,4 +1,5 @@
 ﻿using GameReviewApi.Domain.Entity.Dto;
+using GameReviewApi.Domain.Paging;
 
 namespace GameReviewApi.Service.Interfaces
 {
@@ -6,6 +7,6 @@ namespace GameReviewApi.Service.Interfaces
     {
         Task<UserDto> GetByIdAsyncService(int id);
         Task<bool> DeleteAsyncService(int id);
-        Task<IEnumerable<UserDto>> GetAsyncService();
+        Task<PagedList<UserDto>> GetAsyncService(UserParameters userParameters);
     }
 }

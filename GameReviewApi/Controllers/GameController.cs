@@ -1,6 +1,8 @@
 ﻿using GameReviewApi.Domain.Entity.Dto;
+using GameReviewApi.Domain.Paging;
 using GameReviewApi.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace GameReviewApi.Controllers
 {
@@ -16,15 +18,33 @@ namespace GameReviewApi.Controllers
         /// </summary>
         /// <returns>Вывод всех игр и их средних оценок по убыванию.</returns>
         /// <remarks>
+        /// Образец запроса:
         ///
         ///     GET /games
+        ///     
+        ///        PageNumber: Номер страницы   // Введите номер страницы, которую нужно показать с списоком игр и их средних оценок по убыванию.
+        ///        PageSize: Размер страницы    // Введите размер страницы, с каким количеством данных нужно показать по играм и их средних оценок по убыванию.
         ///
         /// </remarks> 
         /// <response code="200"> Запрос прошёл. (Успех) </response>
         [HttpGet]
         [Route("games")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetGames() => Ok(await _gameService.GamesAvgGradeAsyncService());
+        public async Task<IActionResult> GetGames([FromQuery] GameParameters gameParameters)
+        {
+            var games = await _gameService.GamesAvgGradeAsyncService(gameParameters);
+            var metadata = new
+            {
+                games.TotalCount,
+                games.PageSize,
+                games.CurrentPage,
+                games.TotalPages,
+                games.HasNext,
+                games.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata)); // на unit test отключать.
+            return Ok(games);
+        }
 
         /// <summary>
         /// Игра и все её рецензии и оценки.
@@ -65,7 +85,9 @@ namespace GameReviewApi.Controllers
         /// 
         ///     GET /games/{genre}
         ///     
-        ///        nameGame: название жанра   // Введите название жанра, для вывода списка игр которому они соответствуют.
+        ///        nameGame: название жанра     // Введите название жанра, для вывода списка игр которому они соответствуют.
+        ///        PageNumber: Номер страницы   // Введите номер страницы, которую нужно показать с списоком названий игр по жанру.
+        ///        PageSize: Размер страницы    // Введите размер страницы, с каким количеством данных нужно показать список игр по жанру.
         ///     
         /// </remarks>
         /// <response code="200"> Запрос прошёл. (Успех) </response>
@@ -74,13 +96,23 @@ namespace GameReviewApi.Controllers
         [Route("games/{genre}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetGamesByGenre(string genre)
+        public async Task<IActionResult> GetGamesByGenre(string genre, [FromQuery] GameParameters gameParameters)
         {
-            var games = await _gameService.GamesByGenreAsyncService(genre);
-            if (games == null) 
+            var games = await _gameService.GamesByGenreAsyncService(genre, gameParameters);
+            if (games is null) 
             {
                 return NotFound(games);
             }
+            var metadata = new
+            {
+                games.TotalCount,
+                games.PageSize,
+                games.CurrentPage,
+                games.TotalPages,
+                games.HasNext,
+                games.HasPrevious
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata)); // на unit test отключать.
             return Ok(games);
         }
 

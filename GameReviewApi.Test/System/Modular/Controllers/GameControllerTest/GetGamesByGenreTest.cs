@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using GameReviewApi.Controllers;
+using GameReviewApi.Domain.Paging;
 using GameReviewApi.Service.Interfaces;
 using GameReviewApi.Test.MockData;
 using Microsoft.AspNetCore.Mvc;
@@ -24,12 +25,13 @@ namespace GameReviewApi.Test.System.Modular.Controllers.GameControllerTest
         public async Task GetGamesByGenre_ShouldReturn200Status()
         {
             /// Arrange
-            _gameService.Setup(_ => _.GamesByGenreAsyncService(It.IsAny<string>()))
+            GameParameters gameParameters = new();
+            _gameService.Setup(_ => _.GamesByGenreAsyncService(It.IsAny<string>(), gameParameters))
                 .ReturnsAsync(GameMockData.GamesByGenre(GenreMockData.Get().FirstOrDefault().GenreName));
             GameController gameController = new GameController(_gameService.Object);
             /// Act
             var result = (OkObjectResult)await gameController
-                .GetGamesByGenre(GenreMockData.Get().FirstOrDefault().GenreName);
+                .GetGamesByGenre(GenreMockData.Get().FirstOrDefault().GenreName, gameParameters);
             /// Assert
             result.StatusCode.Should().Be(200);
         }
@@ -42,13 +44,14 @@ namespace GameReviewApi.Test.System.Modular.Controllers.GameControllerTest
         public async Task GetGamesByGenre_ShouldReturn404Status()
         {
             /// Arrange
-            List<string>? games= null;
-            _gameService.Setup(_ => _.GamesByGenreAsyncService(It.IsAny<string>()))
+            GameParameters gameParameters = new();
+            PagedList<string>? games= null;
+            _gameService.Setup(_ => _.GamesByGenreAsyncService(It.IsAny<string>(), gameParameters))
                 .ReturnsAsync(games);
             GameController gameController = new GameController(_gameService.Object);
             /// Act
             var result = (NotFoundObjectResult)await gameController
-                .GetGamesByGenre(new string(GenreMockData.Get().FirstOrDefault().GenreName.Reverse().ToArray()));
+                .GetGamesByGenre(new string(GenreMockData.Get().FirstOrDefault().GenreName.Reverse().ToArray()), gameParameters);
             /// Assert
             result.StatusCode.Should().Be(404);
         }
@@ -61,12 +64,13 @@ namespace GameReviewApi.Test.System.Modular.Controllers.GameControllerTest
         public async Task GetGamesByGenre_ShouldReturnCorrect()
         {
             /// Arrange
-            _gameService.Setup(_ => _.GamesByGenreAsyncService(It.IsAny<string>()))
+            GameParameters gameParameters = new();
+            _gameService.Setup(_ => _.GamesByGenreAsyncService(It.IsAny<string>(),gameParameters))
                 .ReturnsAsync(GameMockData.GamesByGenre(GenreMockData.Get().FirstOrDefault().GenreName));
             GameController gameController = new GameController(_gameService.Object);
             /// Act
             var result = await gameController
-                .GetGamesByGenre(GenreMockData.Get().FirstOrDefault().GenreName);
+                .GetGamesByGenre(GenreMockData.Get().FirstOrDefault().GenreName, gameParameters);
             /// Assert
             var viewResult = Assert.IsType<OkObjectResult>(result);
             var model = Assert.IsAssignableFrom<IEnumerable<string>>(viewResult.Value);

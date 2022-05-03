@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using GameReviewApi.Controllers;
 using GameReviewApi.Domain.Entity.Dto;
+using GameReviewApi.Domain.Paging;
 using GameReviewApi.Service.Interfaces;
 using GameReviewApi.Test.MockData;
 using Microsoft.AspNetCore.Mvc;
@@ -24,10 +25,14 @@ namespace GameReviewApi.Test.System.Modular.Controllers.UserControllerTest
         public async Task GetUsers_ShouldReturn200Status()
         {
             /// Arrange
-            _userService.Setup(_ => _.GetAsyncService()).ReturnsAsync(UserMockData.Get());
+            int pageNumber = 1;
+            int pageSize = UserMockData.Get().Count();
+            UserParameters userParameters = new();
+            PagedList<UserDto> users = PagedList<UserDto>.ToPagedList(UserMockData.Get(), pageNumber, pageSize);
+            _userService.Setup(_ => _.GetAsyncService(userParameters)).ReturnsAsync(users);
             UserController userController = new UserController(_userService.Object);
             /// Act
-            var result = (OkObjectResult)await userController.GetUsers();
+            var result = (OkObjectResult)await userController.GetUsers(userParameters);
             /// Assert
             result.StatusCode.Should().Be(200);
         }
@@ -40,13 +45,17 @@ namespace GameReviewApi.Test.System.Modular.Controllers.UserControllerTest
         public async Task GetUsers_ShouldReturnCorrect()
         {
             /// Arrange
-            _userService.Setup(_ => _.GetAsyncService()).ReturnsAsync(UserMockData.Get());
+            int pageNumber = 1;
+            int pageSize = UserMockData.Get().Count();
+            UserParameters userParameters = new();
+            PagedList<UserDto> users = PagedList<UserDto>.ToPagedList(UserMockData.Get(), pageNumber, pageSize);
+            _userService.Setup(_ => _.GetAsyncService(userParameters)).ReturnsAsync(users);
             UserController userController = new UserController(_userService.Object);
             // Act
-            var result = await userController.GetUsers();
+            var result = await userController.GetUsers(userParameters);
             // Assert
             var viewResult = Assert.IsType<OkObjectResult>(result);
-            var model = Assert.IsAssignableFrom<IEnumerable<UserDto>>(viewResult.Value);
+            var model = Assert.IsAssignableFrom<PagedList<UserDto>>(viewResult.Value);
             Assert.Equal(UserMockData.Get().Count(), model.Count());
         }
     }
