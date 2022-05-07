@@ -4,7 +4,7 @@
     {
         public int GameId { get; set; }
         public string? GameName { get; set; }
-        public List<Review>? Reviews { get; set; }
-        public List<Genre>? Genres { get; set; }
+        public List<ReviewDto>? Reviews { get; set; }
+        public List<GenreDto>? Genres { get; set; }
     }
 }

@@ -42,7 +42,7 @@ namespace GameReviewApi.Controllers
                 games.HasNext,
                 games.HasPrevious
             };
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata)); // на unit test отключать.
+            Response?.Headers?.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
             return Ok(games);
         }
 
@@ -112,7 +112,7 @@ namespace GameReviewApi.Controllers
                 games.HasNext,
                 games.HasPrevious
             };
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata)); // на unit test отключать.
+            Response?.Headers?.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
             return Ok(games);
         }
 

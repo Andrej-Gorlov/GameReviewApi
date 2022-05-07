@@ -47,7 +47,7 @@ namespace GameReviewApi.Controllers
                 users.HasNext,
                 users.HasPrevious
             };
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata)); // на unit test отключать.
+            Response?.Headers?.Add("X-Pagination", JsonConvert.SerializeObject(metadata));
             return Ok(users);
         } 
         
