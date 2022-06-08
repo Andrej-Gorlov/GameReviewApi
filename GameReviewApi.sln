@@ -17,7 +17,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{3428
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameReviewApi.Service", "GameReviewApi.Service\GameReviewApi.Service.csproj", "{985BDC5B-2D14-47BC-91CC-84556C9F7154}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameReviewApi.Test", "GameReviewApi.Test\GameReviewApi.Test.csproj", "{883F6E43-9D52-4EA0-ABFD-E3C378F1736D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameReviewApi.Test", "GameReviewApi.Test\GameReviewApi.Test.csproj", "{883F6E43-9D52-4EA0-ABFD-E3C378F1736D}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{5B381F2A-F7E1-4DDA-BA85-083E8195F264}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{883F6E43-9D52-4EA0-ABFD-E3C378F1736D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{883F6E43-9D52-4EA0-ABFD-E3C378F1736D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{883F6E43-9D52-4EA0-ABFD-E3C378F1736D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B381F2A-F7E1-4DDA-BA85-083E8195F264}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B381F2A-F7E1-4DDA-BA85-083E8195F264}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B381F2A-F7E1-4DDA-BA85-083E8195F264}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B381F2A-F7E1-4DDA-BA85-083E8195F264}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

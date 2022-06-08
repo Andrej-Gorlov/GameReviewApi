@@ -48,7 +48,6 @@ namespace GameReviewApi.DAL.Repository
                 ShortStories = _db.Review.Where(x => x.GameId == GameId(nameGame)).Select(x => x.ShortStory).ToList(),
                 Grades = await _db.Review.Where(x => x.GameId == GameId(nameGame)).Select(x => x.Grade).ToListAsync()
             };
-
         private int GameId(string nameGame)
         {
             Game game = _db.Game.FirstOrDefault(x => x.GameName.ToUpper().Replace(" ", "") == nameGame.ToUpper().Replace(" ", ""));
@@ -59,12 +58,10 @@ namespace GameReviewApi.DAL.Repository
             Game game = await _db.Game.Include(s => s.Genres).Include(s => s.Reviews).FirstOrDefaultAsync(x => x.GameId == id);
             return _mapper.Map<GameDto>(game);
         }
-
         public async Task<IEnumerable<string>> GetGames(string genre) =>
             _mapper.Map<List<string>>(await _db.Game.Where(game => game.Genres
                 .Any(g => g.GenreName.ToUpper().Replace(" ", "") == genre.ToUpper().Replace(" ", "")))
                 .Select(x => x.GameName).ToListAsync());
-       
         public async Task<List<GameAvgGrade>> GetGamesAvgGrade() =>
             await _db.Game.Include(x => x.Reviews).Select(x => new GameAvgGrade
             {

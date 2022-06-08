@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace GameReviewApi.DAL.Repository
@@ -29,7 +30,7 @@ namespace GameReviewApi.DAL.Repository
             {
                 UserName = entity.UserName,
                 Email = entity.Email,
-                Password = BCrypt.Net.BCrypt.HashPassword(entity.Password),
+                Password = HashPassowrd(entity.Password),
                 Role=Role.User
             };
             _db.Add(user);
@@ -47,7 +48,7 @@ namespace GameReviewApi.DAL.Repository
             {
                 UserName = entity.UserName,
                 Email = entity.Email,
-                Password = BCrypt.Net.BCrypt.HashPassword(entity.Password),
+                Password = HashPassowrd(entity.Password),
                 Role = Role.Admin
             };
             _db.Add(user);
@@ -57,20 +58,35 @@ namespace GameReviewApi.DAL.Repository
         public async Task<string> Login(Login entity)
         {
             var user = await _db.User.FirstOrDefaultAsync(x => x.UserName == entity.UserName);
-            if (user != null || !BCrypt.Net.BCrypt.Verify(user.Password, entity.Password))
+            if (user is null)
             {
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"]);
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(new[] { new Claim("id", user.UserId.ToString()) }),
-                    Expires = DateTime.UtcNow.AddHours(3),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                };
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-                return tokenHandler.WriteToken(token);
+                return "Пользователь не найден.";
             }
-            return "401";
+            if (user.Password != HashPassowrd(entity.Password))
+            {
+                return "Неверный пароль.";
+            }
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"]);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[] { new Claim("id", user.UserId.ToString()) }),
+                Expires = DateTime.UtcNow.AddHours(3),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+
+        }
+        public static string HashPassowrd(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                var hash = BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+
+                return hash;
+            }
         }
     }
 }

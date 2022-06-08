@@ -27,7 +27,7 @@ namespace GameReviewApi.Controllers
         ///     
         /// </remarks>
         /// <response code="200"> Запрос прошёл. (Успех) </response>
-        /// <response code="400"> Недопустимое значение ввода </response>
+        /// <response code="400"> Недопустимое значение ввода. </response>
         /// <response code="401"> Пользователь не авторизован. </response>
         /// <response code="404"> Жанр не найден. </response>
         [HttpGet]

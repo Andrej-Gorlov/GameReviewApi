@@ -30,6 +30,7 @@ namespace GameReviewApi.DAL
                 GameId = 3,
                 GameName = "Devil May Cry"
             });
+
             modelBuilder.Entity<Genre>().HasData(new Genre
             {
                 GenreId=1,
